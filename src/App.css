@@ -182,3 +182,46 @@
     border-right-color: var(--border);
   }
 }
+
+.btn {
+    text-decoration: none;
+    color: inherit;
+    border: 2px solid lightblue;
+    border-radius: 50px;
+    padding: 5px;
+    background-color: blue;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: red;
+}
+
+
+nav {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-form>div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-imagen-preview {
+    width: 100px;
+}

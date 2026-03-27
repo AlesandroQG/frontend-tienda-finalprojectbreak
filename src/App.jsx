@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { ThemeProvider } from "./themes/ThemeContext.jsx";
+import RoutesApp from "./routes/RoutesApp.jsx";
 import "./App.css";
 
 function App() {
     return (
         <>
+            <ThemeProvider>
+                <RoutesApp />
+            </ThemeProvider>
         </>
     );
 }

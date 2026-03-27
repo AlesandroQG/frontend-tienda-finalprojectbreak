@@ -1,0 +1,114 @@
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+function EditProduct({urlApi, product, setUpdate}) {
+    const navigate = useNavigate();
+    const editProduct = async (id, data) => {
+        const payload = data;
+        try {
+            const response = await fetch(`${urlApi}/update/${id}`, {
+                method: 'PUT', // Método HTTP
+                headers: {
+                    'Content-Type': 'application/json', // Indicamos que el contenido es JSON
+                },
+                body: JSON.stringify(payload), // Convertimos el payload de JS a JSON
+            });
+            const result = await response.json();
+            console.log(result);
+            setUpdate(value => !value);
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+    const deleteProduct = async (id) => {
+        try {
+            const response = await fetch(`${urlApi}/delete/${id}`, {
+                method: 'DELETE', // Método HTTP
+                headers: {
+                    'Content-Type': 'application/json', // Indicamos que el contenido es JSON
+                }
+            });
+            const result = await response.json();
+            console.log(result);
+            setUpdate(value => !value);
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+    const [nombre, setNombre] = useState(product.nombre);
+    const nombreInputRef = useRef(null);
+    const [descripcion, setDescripcion] = useState(product.descripcion);
+    const descripcionInputRef = useRef(null);
+    const [imagen, setImagen] = useState(product.imagen);
+    const imagenInputRef = useRef(null);
+    const [precio, setPrecio] = useState(product.precio);
+    const precioInputRef = useRef(null);
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState("");
+    useEffect(() => {
+        //
+    }, []);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (nombre && descripcion && imagen && precio) {
+            const data = {nombre, descripcion, imagen, precio};
+            if (editProduct(product._id, data)) {
+                setSuccess("Producto actualizado correctamente.")
+                setError("");
+            } else {
+                setSuccess("");
+                setError("No se ha podido actualizar el producto.")
+            }
+        } else {
+            setSuccess("");
+            setError("Los campos nombre, descripción, imagen y precio no pueden estar vacíos.");
+        }
+    };
+    const handleDelete = (e) => {
+        if (window.confirm("¿Estás seguro que quieres eliminar este producto?")) {
+            if (deleteProduct(product._id)) {
+                navigate("/");
+            } else {
+                setError("No se ha podido eliminar el producto.")
+            }
+        }
+    };
+    return (
+        <>
+            <h2>Editar Producto</h2>
+            <Link className="btn" to={`/${product._id}`}>Atras</Link>
+            <h2>{nombre}</h2>
+            <p className="success">{success}</p>
+            <p className="error">{error}</p>
+            <form onSubmit={handleSubmit} className="product-form">
+                <div>
+                    <label htmlFor="nombre">Nombre:</label>
+                    <input type="text" id="nombre" value={nombre} ref={nombreInputRef} onChange={() => setNombre(nombreInputRef.current.value)} required />
+                </div>
+                <div>
+                    <label htmlFor="descripcion">Descripción:</label>
+                    <input type="text" id="descripcion" value={descripcion} ref={descripcionInputRef} onChange={() => setDescripcion(descripcionInputRef.current.value)} required />
+                </div>
+                <div>
+                    <label htmlFor="imagen">Imagen:</label>
+                    <input type="url" id="imagen" value={imagen} ref={imagenInputRef} onChange={() => setImagen(imagenInputRef.current.value)} required />
+                </div>
+                <div>
+                    <label htmlFor="precio">Precio (€):</label>
+                    <input type="number" id="precio" value={precio} ref={precioInputRef} onChange={() => setPrecio(precioInputRef.current.value)} required />
+                </div>
+                <button type="submit">Actualizar</button>
+            </form>
+            <div>
+                <img className="product-imagen-preview" src={imagen} alt={nombre} />
+            </div>
+            <button onClick={handleDelete}>Eliminar</button>
+        </>
+    );
+}
+
+export default EditProduct;

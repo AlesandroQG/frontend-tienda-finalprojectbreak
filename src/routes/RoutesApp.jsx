@@ -1,0 +1,51 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
+import { ThemeContext } from '../themes/ThemeContext.jsx';
+import Header from '../components/Header.jsx';
+import Home from "../pages/Home.jsx";
+import CreateProduct from "../pages/CreateProduct.jsx";
+import Product from "../pages/Product.jsx";
+import EditProduct from "../pages/EditProduct.jsx";
+
+const RoutesApp = () => {
+    const { theme } = useContext(ThemeContext);
+    const [data, setData] = useState([]);
+    const [update, setUpdate] = useState(false);
+    // const urlApi = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
+    const urlApi = "http://localhost:3000";
+    const getProducts = async () => {
+        try {
+            const response = await fetch(urlApi);
+            const result = await response.json();
+            setData(result);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        getProducts();
+    }, [update]);
+    return (
+        <Router>
+            <section className={`App ${theme}`}>
+                <div className="container">
+                    <Header />
+                    {data === null ? (<p>Cargando...</p>) : (
+                        <Routes>
+                            <Route path="/" element={<Home products={data} />} />
+                            <Route path="/create" element={<CreateProduct urlApi={urlApi} setUpdate={setUpdate} />} />
+                            {data.map((product) => (
+                                <>
+                                    <Route key={`product-${product._id}`} path={`/${product._id}`} element={<Product product={product} />} />
+                                    <Route key={`edit-${product._id}`} path={`/edit/${product._id}`} element={<EditProduct urlApi={urlApi} product={product} setUpdate={setUpdate} />} />
+                                </>
+                            ))}
+                        </Routes>
+                    )}
+                </div>
+            </section>
+        </Router>
+    );
+};
+
+export default RoutesApp;
