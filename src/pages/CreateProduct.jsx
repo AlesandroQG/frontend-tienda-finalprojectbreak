@@ -1,10 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function CreateProduct({urlApi, setUpdate}) {
+    const { user } = useAuth();
     const createProduct = async (data) => {
         const payload = data;
         try {
-            const response = await fetch(`${urlApi}/create`, {
+            const response = await fetch(`${urlApi}/products/create`, {
                 method: 'POST', // Método HTTP
                 headers: {
                     'Content-Type': 'application/json', // Indicamos que el contenido es JSON
@@ -20,6 +23,12 @@ function CreateProduct({urlApi, setUpdate}) {
             return false;
         }
     };
+    const navigation = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigation("/");
+        }
+    }, []);
     const [nombre, setNombre] = useState("");
     const nombreInputRef = useRef(null);
     const [descripcion, setDescripcion] = useState("");
@@ -33,7 +42,7 @@ function CreateProduct({urlApi, setUpdate}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (nombre && descripcion && imagen && precio) {
-            const data = {nombre, descripcion, imagen, precio};
+            const data = {nombre, descripcion, imagen, precio, user};
             if (createProduct(data)) {
                 setNombre("");
                 setDescripcion("");
@@ -74,7 +83,8 @@ function CreateProduct({urlApi, setUpdate}) {
                 </div>
                 <button type="submit">Crear</button>
             </form>
-            <div>
+            <div className="product-image-preview-container">
+                <p>Imagen:</p>
                 <img className="product-imagen-preview" src={imagen} alt={nombre} />
             </div>
         </>

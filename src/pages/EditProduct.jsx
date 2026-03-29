@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function EditProduct({urlApi, product, setUpdate}) {
-    const navigate = useNavigate();
+    const { user } = useAuth();
     const editProduct = async (id, data) => {
         const payload = data;
         try {
-            const response = await fetch(`${urlApi}/update/${id}`, {
+            const response = await fetch(`${urlApi}/products/update/${id}`, {
                 method: 'PUT', // Método HTTP
                 headers: {
                     'Content-Type': 'application/json', // Indicamos que el contenido es JSON
@@ -24,7 +25,7 @@ function EditProduct({urlApi, product, setUpdate}) {
     };
     const deleteProduct = async (id) => {
         try {
-            const response = await fetch(`${urlApi}/delete/${id}`, {
+            const response = await fetch(`${urlApi}/products/delete/${id}/${user}`, {
                 method: 'DELETE', // Método HTTP
                 headers: {
                     'Content-Type': 'application/json', // Indicamos que el contenido es JSON
@@ -39,6 +40,12 @@ function EditProduct({urlApi, product, setUpdate}) {
             return false;
         }
     };
+    const navigation = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigation("/");
+        }
+    }, []);
     const [nombre, setNombre] = useState(product.nombre);
     const nombreInputRef = useRef(null);
     const [descripcion, setDescripcion] = useState(product.descripcion);
@@ -49,13 +56,10 @@ function EditProduct({urlApi, product, setUpdate}) {
     const precioInputRef = useRef(null);
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-    useEffect(() => {
-        //
-    }, []);
     const handleSubmit = (e) => {
         e.preventDefault();
         if (nombre && descripcion && imagen && precio) {
-            const data = {nombre, descripcion, imagen, precio};
+            const data = {nombre, descripcion, imagen, precio, user};
             if (editProduct(product._id, data)) {
                 setSuccess("Producto actualizado correctamente.")
                 setError("");
@@ -71,7 +75,7 @@ function EditProduct({urlApi, product, setUpdate}) {
     const handleDelete = (e) => {
         if (window.confirm("¿Estás seguro que quieres eliminar este producto?")) {
             if (deleteProduct(product._id)) {
-                navigate("/");
+                navigation("/");
             } else {
                 setError("No se ha podido eliminar el producto.")
             }
@@ -103,10 +107,11 @@ function EditProduct({urlApi, product, setUpdate}) {
                 </div>
                 <button type="submit">Actualizar</button>
             </form>
-            <div>
+            <button className="btn delete" onClick={handleDelete}>Eliminar</button>
+            <div className="product-image-preview-container">
+                <p>Imagen:</p>
                 <img className="product-imagen-preview" src={imagen} alt={nombre} />
             </div>
-            <button onClick={handleDelete}>Eliminar</button>
         </>
     );
 }

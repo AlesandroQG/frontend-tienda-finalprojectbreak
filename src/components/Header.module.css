@@ -1,0 +1,14 @@
+.header nav a {
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid lightblue;
+    border-radius: 50px;
+    padding: 2px;
+    background-color: blue;
+    font-weight: bold;
+    color: #ccc;
+}
+
+.header nav a:hover {
+    background-color: red;
+}

@@ -55,11 +55,11 @@ body {
 }
 
 #root {
-  width: 1126px;
+  /* width: 1126px; */
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
+  /* border-inline: 1px solid var(--border); */
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -114,12 +114,13 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  min-height: 100vh;
+  max-width: 100vw;
+  max-height: 100%;
 }
 
 .container {
-    height: 100vh;
+    height: 100%;
+    width: 100%;
 }
 
 .light {
@@ -130,6 +131,14 @@ code {
 .dark {
   background-color: #242424;
   color: #ccc;
+}
+
+.light .invert {
+    color: #ccc;
+}
+
+.dark .invert {
+    color: black;
 }
 
 .content {
