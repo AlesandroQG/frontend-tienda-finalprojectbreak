@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/AuthContext.jsx";
 
 function EditProduct({urlApi, product, setUpdate}) {
     const { user } = useAuth();
@@ -15,9 +15,8 @@ function EditProduct({urlApi, product, setUpdate}) {
                 body: JSON.stringify(payload), // Convertimos el payload de JS a JSON
             });
             const result = await response.json();
-            console.log(result);
             setUpdate(value => !value);
-            return true;
+            return result;
         } catch (error) {
             console.error(error);
             return false;
@@ -32,7 +31,6 @@ function EditProduct({urlApi, product, setUpdate}) {
                 }
             });
             const result = await response.json();
-            console.log(result);
             setUpdate(value => !value);
             return true;
         } catch (error) {
@@ -54,21 +52,19 @@ function EditProduct({urlApi, product, setUpdate}) {
     const imagenInputRef = useRef(null);
     const [precio, setPrecio] = useState(product.precio);
     const precioInputRef = useRef(null);
-    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (nombre && descripcion && imagen && precio) {
             const data = {nombre, descripcion, imagen, precio, user};
-            if (editProduct(product._id, data)) {
-                setSuccess("Producto actualizado correctamente.")
+            const result = await editProduct(product._id, data);
+            if (result) {
                 setError("");
+                navigation(`/${product._id}`);
             } else {
-                setSuccess("");
                 setError("No se ha podido actualizar el producto.")
             }
         } else {
-            setSuccess("");
             setError("Los campos nombre, descripción, imagen y precio no pueden estar vacíos.");
         }
     };
@@ -86,7 +82,6 @@ function EditProduct({urlApi, product, setUpdate}) {
             <h2>Editar Producto</h2>
             <Link className="btn" to={`/${product._id}`}>Atras</Link>
             <h2>{nombre}</h2>
-            <p className="success">{success}</p>
             <p className="error">{error}</p>
             <form onSubmit={handleSubmit} className="product-form">
                 <div>
@@ -110,7 +105,7 @@ function EditProduct({urlApi, product, setUpdate}) {
             <button className="btn delete" onClick={handleDelete}>Eliminar</button>
             <div className="product-image-preview-container">
                 <p>Imagen:</p>
-                <img className="product-imagen-preview" src={imagen} alt={nombre} />
+                <img className="product-imagen-preview" src={imagen || null} alt="Image preview" />
             </div>
         </>
     );

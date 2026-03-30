@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/AuthContext.jsx";
 
 function CreateProduct({urlApi, setUpdate}) {
     const { user } = useAuth();
@@ -15,7 +15,6 @@ function CreateProduct({urlApi, setUpdate}) {
                 body: JSON.stringify(payload), // Convertimos el payload de JS a JSON
             });
             const result = await response.json();
-            console.log(result);
             setUpdate(value => !value);
             return true;
         } catch (error) {
@@ -85,7 +84,7 @@ function CreateProduct({urlApi, setUpdate}) {
             </form>
             <div className="product-image-preview-container">
                 <p>Imagen:</p>
-                <img className="product-imagen-preview" src={imagen} alt={nombre} />
+                <img className="product-imagen-preview" src={imagen || null} alt="Image preview" />
             </div>
         </>
     );

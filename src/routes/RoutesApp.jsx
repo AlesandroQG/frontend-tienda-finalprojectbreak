@@ -12,7 +12,7 @@ import EditProduct from "../pages/EditProduct.jsx";
 
 const RoutesApp = () => {
     const { theme } = useContext(ThemeContext);
-    const [data, setData] = useState([]);
+    const [products, setProducts] = useState([]);
     const [update, setUpdate] = useState(false);
     // const urlApi = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
     const urlApi = "http://localhost:3000";
@@ -20,7 +20,7 @@ const RoutesApp = () => {
         try {
             const response = await fetch(`${urlApi}/products`);
             const result = await response.json();
-            setData(result);
+            setProducts(result);
         } catch (error) {
             console.error(error);
         }
@@ -33,15 +33,16 @@ const RoutesApp = () => {
             <section className={`App ${theme}`}>
                 <div className="container">
                     <Header />
-                    {data === null ? (<p>Cargando...</p>) : (
+                    {products === null ? (<p>Cargando...</p>) : (
                         <Routes>
-                            <Route path="/" element={<Home products={data} />} />
+                            <Route path="/" element={<Home products={products} />} />
                             <Route path="/login" element={<Login urlApi={urlApi} />} />
                             <Route path="/logout" element={<Logout />} />
                             <Route path="/create" element={<CreateProduct urlApi={urlApi} setUpdate={setUpdate} />} />
-                            {data.map((product) => (
+                            <Route path={`/:id`} element={<Product urlApi={urlApi} />} />
+                            {products.map((product) => (
                                 <>
-                                    <Route key={`product-${product._id}`} path={`/${product._id}`} element={<Product product={product} />} />
+                                    {/* <Route key={`product-${product._id}`} path={`/${product._id}`} element={<Product urlApi={urlApi} />} /> */}
                                     <Route key={`edit-${product._id}`} path={`/edit/${product._id}`} element={<EditProduct urlApi={urlApi} product={product} setUpdate={setUpdate} />} />
                                 </>
                             ))}
