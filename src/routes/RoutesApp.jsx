@@ -15,7 +15,6 @@ const RoutesApp = () => {
     const [products, setProducts] = useState([]);
     const [update, setUpdate] = useState(false);
     const urlApi = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
-    // const urlApi = "http://localhost:3000";
     const getProducts = async () => {
         try {
             const response = await fetch(`${urlApi}/products`);
